@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.taobaosimple.mapper.UserMapper">
+
+    <insert id="insertUser">
+        insert into user(username, password, virtual_name)
+        values (#{username},
+                #{password},
+                #{virtualName})
+    </insert>
+
+    <select id="selectUser" resultType="com.example.taobaosimple.dao.user.User">
+        select * from user where username = #{username} and deleted = 0
+    </select>
+
+    <update id="updateUser" >
+        update `user`
+        set virtual_name = #{virtualName},
+            phone        = #{phone},
+            sex          = #{sex}
+        where  username = #{username} and deleted = 0
+    </update>
+
+    <update id="deleteUser" >
+        update `user`
+        set deleted = 1
+        where username = #{username}
+    </update>
+
+    <update id="insertAvatar" >
+        update `user`
+        set avatar = #{avatar}
+        where username = #{username}
+    </update>
+
+</mapper>

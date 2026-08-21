@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.taobaosimple.mapper.UserAddressMapper">
+
+
+    <insert id="insertUserAddress" parameterType="com.example.taobaosimple.dao.user.UserAddress">
+        insert into user_address(
+            user_id,
+            receiver_name,
+            receiver_phone,
+            region,
+            detail_address,
+            postal_code,
+            is_default,
+            is_top
+        )
+        values (
+                #{userId},
+                #{receiverName},
+                #{receiverPhone},
+                #{region},
+                #{detailAddress},
+                #{postalCode},
+                #{isDefault},
+                #{isTop}
+               )
+    </insert>
+
+    <select id="selectUserAddressByUserId" parameterType="com.example.taobaosimple.dao.user.UserAddress">
+        select
+            id,
+            user_id,
+            receiver_name,
+            receiver_phone,
+            region,
+            detail_address,
+            postal_code,
+            is_default,
+            is_top,
+            create_time,
+            update_time
+        from user_address
+        where user_id = #{userId}
+          and deleted = 0
+        order by
+            is_default desc,
+            is_top desc,
+            update_time desc
+    </select>
+
+    <update id="updateUserAddress" parameterType="com.example.taobaosimple.dao.user.UserAddress">
+        update `user_address`
+        set receiver_name = #{receiverName},
+            receiver_phone = #{receiverPhone},
+            region = #{region},
+            detail_address = #{detailAddress},
+            postal_code = #{postalCode},
+            is_default = #{isDefault},
+            is_top = #{isTop}
+        where user_id = #{userId}
+        and id = #{id}
+        and deleted = 0
+    </update>
+
+
+    <update id="clearDefaultByUserId" >
+        update `user_address`
+        set is_default = 0
+        where user_id = #{userId}
+          and deleted = 0
+    </update>
+
+    <update id="setDefaultById">
+        update `user_address`
+        set is_default = #{isDefault}
+        where user_id = #{userId}
+        and id = #{id}
+        and deleted = 0
+    </update>
+
+    <update id="setIsTopById">
+        update `user_address`
+        set is_top = #{isTop}
+        where user_id = #{userId}
+          and id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="deleteUserAddressById">
+        update `user_address`
+        set deleted = 1
+        where user_id = #{userId}
+          and id = #{id}
+    </update>
+
+
+</mapper>

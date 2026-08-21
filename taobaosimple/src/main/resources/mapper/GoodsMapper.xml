@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.taobaosimple.mapper.GoodsMapper">
+
+    <insert id="insertGoods"
+            parameterType="com.example.taobaosimple.dao.goods.Goods"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into goods (
+            name,
+            price,
+            type_id,
+            introduction,
+            photo_url,
+            inventory
+        )
+        values (
+                   #{name},
+                   #{price},
+                   #{typeId},
+                   #{introduction},
+                   #{photoUrl},
+                   #{inventory}
+               )
+    </insert>
+
+    <select id="selectGoodsById" parameterType="com.example.taobaosimple.vo.GoodsVo">
+        select g.id,
+               g.name,
+               g.price,
+               t.type_name,
+               g.introduction,
+               g.photo_url,
+               g.inventory,
+               g.status,
+               g.sales,
+               g.deleted,
+               g.create_time,
+               g.update_time
+        from goods as g
+                 left join goods_type as t on g.type_id = t.id
+        where g.deleted = 0
+          and g.status = 1
+          and g.id = #{id}
+    </select>
+
+    <select id="selectAllGoods" resultMap="GoodsResultMap">
+        select
+            id,
+            name,
+            price,
+            type_id,
+            introduction,
+            photo_url,
+            inventory,
+            status,
+            sales,
+            deleted,
+            create_time,
+            update_time
+        from goods
+        where deleted = 0
+          and status = 1
+    </select>
+
+    <select id="selectGoodsByName" resultMap="GoodsResultMap">
+        select
+            id,
+            name,
+            price,
+            type_id,
+            introduction,
+            photo_url,
+            inventory,
+            status,
+            sales,
+            deleted,
+            create_time,
+            update_time
+        from goods
+
+        where deleted = 0
+          and status = 1
+          and name like concat('%', #{name}, '%')
+    </select>
+
+    <update id="updateGoods" parameterType="com.example.taobaosimple.dao.goods.Goods">
+        update `goods`
+        set name=#{name}
+          , price =#{price}
+          , type_id=#{typeId}
+          , introduction= #{introduction}
+          , inventory=#{inventory}
+        where id = #{id}
+    </update>
+
+    <update id="deleteGoods" parameterType="com.example.taobaosimple.dao.goods.Goods">
+        update `goods`
+        set
+            status = 0,
+            deleted = 1
+        where name = #{name}
+    </update>
+
+
+    
+    <resultMap id="GoodsResultMap" type="com.example.taobaosimple.dao.goods.Goods">
+        <id property="id" column="id"/>
+
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="typeId" column="type_id"/>
+        <result property="introduction" column="introduction"/>
+        <result property="photoUrl" column="photo_url"/>
+        <result property="inventory" column="inventory"/>
+        <result property="status" column="status"/>
+        <result property="sales" column="sales"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+
+    </resultMap>
+
+    <select id="selectRandomGoods" parameterType="com.example.taobaosimple.vo.GoodsVo">
+        select g.id,
+               g.name,
+               g.price,
+               t.type_name as typeName,
+               g.introduction,
+               g.photo_url,
+               g.inventory,
+               g.create_time
+        from goods as g
+        left join goods_type as t on t.id = g.type_id
+        where g.deleted = 0
+          and g.status = 1
+
+        <if test="ids != null and ids.size() > 0">
+            and g.id not in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        order by rand()
+            limit #{limit}
+
+    </select>
+
+    <select id="selectGoodsByTypeId" parameterType="com.example.taobaosimple.vo.GoodsVo">
+        select g.id,
+               g.name,
+               g.price,
+               t.type_name,
+               g.introduction,
+               g.photo_url,
+               g.inventory,
+               g.status,
+               g.sales,
+               g.deleted,
+               g.create_time,
+               g.update_time
+        from goods as g
+                 left join goods_type as t on g.type_id = t.id
+        where g.deleted = 0
+          and g.status = 1
+          and t.id = #{typeId}
+        limit #{page},#{limit}
+    </select>
+
+
+
+</mapper>

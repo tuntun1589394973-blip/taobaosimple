@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.taobaosimple.mapper.CartItemMapper">
+
+    <insert id="insertCartItem"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cart_item (
+            user_id,
+            goods_id,
+            quantity,
+            is_selected
+        )
+        values (
+                   #{userId},
+                   #{goodsId},
+                   #{quantity},
+                   #{selected}
+               )
+    </insert>
+
+    <select id="selectByUserIdAndGoodsId"
+            resultType="com.example.taobaosimple.dao.goods.CartItem">
+        select
+            id,
+            user_id as userId,
+            goods_id as goodsId,
+            quantity,
+            is_selected as selected,
+            create_time as createTime,
+            update_time as updateTime
+        from cart_item
+        where user_id = #{userId}
+          and goods_id = #{goodsId}
+    </select>
+
+    <update id="updateQuantityById">
+        update cart_item
+        set quantity = #{quantity}
+        where goods_id = #{goodsId}
+          and user_id = #{userId}
+    </update>
+
+    <select id="selectCartItemByUserId"
+            resultType="com.example.taobaosimple.vo.CartItemVo">
+        select
+            c.id as cartId,
+            c.goods_id as goodsId,
+            c.quantity,
+            c.is_selected as selected,
+
+            g.name as goodsName,
+            g.price,
+            g.photo_url as photoUrl,
+            g.inventory,
+            g.status,
+            g.deleted
+        from cart_item c
+                 left join goods g on c.goods_id = g.id
+        where c.user_id = #{userId}
+        order by c.update_time desc
+    </select>
+
+    <delete id="deleteCartItemByGoodsById">
+        delete from cart_item
+        where goods_id = #{goodsId}
+          and user_id = #{userId}
+    </delete>
+
+
+
+
+
+</mapper>
